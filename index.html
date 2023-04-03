@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ana Sayfa</title>
+    <!-- CSS Import-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+
+</head>
+
+<body  onload="kullanicilariCek()">
+    <!--Main Navigation-->
+    
+    <div style="margin-top: 3rem">
+        <div class="container pt-1">
+            <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#newModal">Kullanıcı
+                Ekle</button>
+
+            <table class="table" id="myTable">
+                <thead class="table-primary">
+                    <tr>
+                        <th class="header" scope="col">Kullanıcı Adı</th>
+                        <th class="header" scope="col">TC No</th>
+                        <th class="header" scope="col">İşlem</th>
+                        <th class="header" scope="col">Görüntüle</th>
+                        <th class="header" scope="col">Güncelle</th>
+                        <th class="header" scope="col">Sil</th>
+                    </tr>
+                </thead>
+                <tbody id="userTable">
+
+                </tbody>
+            </table>
+
+
+
+            <!-- Silme Modal -->
+            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">Kullanıcı Sil</h5>
+                            <button type="button" class="btn btn-danger close" data-bs-dismiss="modal"
+                                aria-label="Close" id="deleteClose">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Kullanıcıyı silmek istediğinize emin misiniz?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                            <button type="button" class="btn btn-danger" onclick="kullaniciSil()">Sil</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goruntule Modal -->
+            <div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="viewModalLabel">Detay Görüntüle</h5>
+                            <button type="button" class="btn btn-danger close" data-bs-dismiss="modal"
+                                aria-label="Close" id="viewClose">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="accounts-options">Hesap Seç</label>
+                            <select class="form-select" onchange="hesabiGoster(this.value)" aria-label="Hesap Seç"
+                                id="accounts-options">
+
+                            </select>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Hesap IBAN</label>
+                                <input type="text" class="form-control" disabled id="viewAccountIban"
+                                    placeholder="IBAN">
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Hesap Bakiyesi</label>
+                                <input type="text" class="form-control" disabled id="viewAccountNumber"
+                                    placeholder="Bakiyeniz">
+
+                            </div>
+
+                            <hr>
+                            <br>
+                            <table class="table" id="">
+
+                                <thead class="table-dark">
+                                    <tr>
+
+                                        <th class="header" scope="col">İşlem Türü</th>
+                                        <th class="header" scope="col">İşlem Ücret</th>
+                                        <th class="header" scope="col">İşlem Açıklama</th>
+                                        <th class="header" scope="col">İşlem Tarih</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="accountTable">
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guncelle Modal -->
+            <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="updateModalLabel">Kullanıcı Güncelle</h5>
+                            <button type="button" class="btn btn-danger close" data-bs-dismiss="modal"
+                                aria-label="Close" id="updateClose">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">TC Kimlik No</label>
+                                    <input type="number" class="form-control" id="updateTC" minlength="11"
+                                        maxlength="11" placeholder="TC Kimlik giriniz" required>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">İsim</label>
+                                    <input type="text" class="form-control" id="updateIsim" placeholder="Isim giriniz"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Soyisim</label>
+                                    <input type="text" class="form-control" id="updateSoyisim"
+                                        placeholder="Soyisim giriniz" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="exampleInputEmail1">Doğum Tarihi</label>
+                                    <input type="text" class="form-control" id="updateDogum"
+                                        placeholder="Doğum Tarihi giriniz" required>
+                                </div>
+
+                                <div class="alert alert-danger d-none" id="guncelleUyari">
+
+
+                                </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                            <button type="submit" class="btn btn-warning" onclick="guncelle(event)">Güncelle</button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Islem Modal -->
+            <div class="modal fade" id="actionModal" tabindex="-1" role="dialog" aria-labelledby="actionModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="actionModalLabel">Kullanıcı İşlemleri</h5>
+                            <button type="button" class="btn btn-danger close" data-bs-dismiss="modal"
+                                aria-label="Close" id="islemClose">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <h6>Yeni Hesap İşlemleri</h6>
+                            <form>
+                                <div class="form-group mb-3">
+                                    <label for="exampleInputEmail1">Hesap Adı</label>
+                                    <input type="text" class="form-control" id="actionAccountName"
+                                        placeholder="Hesap Adı Giriniz" required minlength="1">
+
+                                        <label for="yeniHesapBakiye">Bakiye</label>
+                                        <input type="number" class="form-control" id="yeniHesapBakiye"
+                                            placeholder="Bakiye giriniz" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary" onclick="yeniHesap(event)">Hesap
+                                    Aç</button>
+
+                                <div class="mt-2 alert alert-danger d-none" id="hesapAcmaUyari">
+                                    Hata lütfen bilgileri kontrol ederek yeniden giriniz.
+                                </div>
+                            </form>
+                            <hr>
+
+                            <h6>Para Aktarma İşlemleri</h6>
+                            <form>
+                                <div class="form-group">
+                                    <label for="gondericiHesap">Gönderici Hesap</label>
+                                    <select class="form-select" aria-label="Hesap Seç" id="gondericiHesap">
+
+                                    </select>
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="aliciHesap">Alıcı Hesap</label>
+                                    <select class="form-select" aria-label="Hesap Seç" id="aliciHesap">
+
+                                    </select>
+
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="paraAktarUcret">Ücret</label>
+                                    <input type="number" class="form-control" id="paraAktarUcret"
+                                        placeholder="Ücret giriniz" required>
+
+                                </div>
+
+
+                                <button type="button" class="btn btn-warning" id="paraAktar"
+                                    onclick="paraAktarmaButon(event)">Para Aktar</button>
+
+                                <div class="mt-2 alert alert-danger d-none" id="paraAktarmaUyari">
+                                    Bakiyeniz yetersiz.
+                                </div>
+                            </form>
+                            <hr>
+
+                            <h6>Para Çekme / Yatırma İşlemleri</h6>
+                            <form>
+                                <label for="action-option">Hesap Seç</label>
+                                <select class="form-select" onchange="paraCekmeYatirma(this.value)"
+                                    aria-label="Hesap Seç" id="action-option">
+
+                                </select>
+
+                                <label for="actionAcountPrice">Ücret</label>
+                                <input type="number" class="form-control" id="actionAcountPrice"
+                                    placeholder="Ücret giriniz" disabled required>
+                                <br>
+
+                                <button type="button" class="btn btn-danger" id="paraCek" onclick="paraCekButon(event)"
+                                    disabled>Para Çek</button>
+                                <button type="button" class="btn btn-success" id="paraYatir"
+                                    onclick="paraYatirmaButon(event)" disabled>Para Yatır</button>
+                                <div class="mt-2 alert alert-danger d-none" id="hesapParaIslemUyari">
+                                    Bakiyeniz yetersiz.
+                                </div>
+                            </form>
+
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Kullanıcı Ekle Modal -->
+            <div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="newModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="newModalLabel">Yeni Kullanıcı Ekle</h5>
+                            <button type="button" class="btn btn-danger close" data-bs-dismiss="modal"
+                                aria-label="Close" id="newClose">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">TC Kimlik No</label>
+                                    <input type="number" class="form-control" id="newTC" minlength="11" maxlength="11"
+                                        placeholder="TC Kimlik giriniz" required>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">İsim</label>
+                                    <input type="text" class="form-control" id="newIsim" placeholder="Isim giriniz"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Soyisim</label>
+                                    <input type="text" class="form-control" id="newSoyisim"
+                                        placeholder="Soyisim giriniz" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="exampleInputEmail1">Doğum Tarihi</label>
+                                    <input type="text" class="form-control" id="newDogum"
+                                        placeholder="Doğum Tarihi giriniz" value="dd.mm.yy" required>
+                                </div>
+
+                                <div class="alert alert-danger d-none" id="yeniKullaniciUyari">
+
+
+                                </div>
+
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                            <button type="submit mt-2" class="btn btn-primary"
+                                onclick="kullaniciEkle(event)">Ekle</button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+</body>
+
+</html>
